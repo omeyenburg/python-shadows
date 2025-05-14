@@ -96,7 +96,7 @@ def get_triangle_points(
                 if (
                     corner[0] != v_corner[0]
                     and corner[1] != v_corner[1]
-                    and not None in v_corner
+                    and None not in v_corner
                 ):
                     corner_angles.append([v_angle, *v_corner])
 
@@ -153,92 +153,3 @@ def get_edges(corners):
     edges.extend(flattened_corners)
 
     return edges
-
-
-def draw_shadows(view):
-    # Get corners and edges
-    corners, additional_corners = find_corners(view)
-    edges = get_edges(corners)
-    corners = corners.union(additional_corners)
-
-    # Find light sources
-    # light_sources = numpy.argwhere(view == 2)
-    mousePos = (
-        pygame.mouse.get_pos()[0] / BLOCKSIZE - 1,
-        pygame.mouse.get_pos()[1] / BLOCKSIZE - 1,
-    )
-    light_sources = [mousePos]
-
-    # Sort and draw corners
-    for light_source in light_sources:
-        corners = list(additional_corners.union(corners))
-
-        triangle_points = get_triangle_points(
-            view, light_source, numpy.array(corners), edges
-        )
-        triangle_points.sort(key=lambda n: n[0], reverse=False)
-
-        # Draw to shadow surface
-        triangle_points = tuple(map(lambda n: P(*n[1:]), triangle_points))
-        if len(triangle_points) > 2:
-            pygame.draw.polygon(window, (200, 100, 250), triangle_points)
-        for corner in triangle_points:
-            pygame.draw.line(window, (255, 255, 255), P(*mousePos), corner)
-
-
-# Walls
-view = numpy.array(
-    [
-        [0, 0, 0, 0, 0, 0, 0],
-        [0, 1, 1, 0, 1, 0, 0],
-        [0, 1, 1, 0, 1, 1, 0],
-        [0, 0, 0, 0, 0, 0, 0],
-        [0, 0, 1, 0, 0, 0, 0],
-        [0, 0, 0, 1, 1, 0, 0],
-        [0, 0, 0, 0, 0, 0, 0],
-    ],
-    dtype=int,
-)
-
-
-# Pygame visualisation
-import pygame
-
-BLOCKSIZE = 64
-window_size = (view.shape[0] * BLOCKSIZE, view.shape[1] * BLOCKSIZE)
-pygame.init()
-pygame.display.set_caption("Shadows")
-window = pygame.display.set_mode(window_size)
-fragCoord = (2.9, 2.9)
-
-
-# Scale coordinates by BLOCKSIZE
-def P(x, y):
-    x += 1
-    y += 1
-    return (x * BLOCKSIZE, y * BLOCKSIZE)
-
-
-while True:
-    window.fill((0, 0, 0))
-    mousePos = (
-        pygame.mouse.get_pos()[0] / BLOCKSIZE,
-        pygame.mouse.get_pos()[1] / BLOCKSIZE,
-    )
-
-    for x, y in numpy.ndindex(view.shape):
-        if view[x, y]:
-            pygame.draw.rect(
-                window,
-                (255, 255, 255),
-                (x * BLOCKSIZE, y * BLOCKSIZE, BLOCKSIZE, BLOCKSIZE),
-            )
-
-    if sum(mousePos) > 0:
-        draw_shadows(view)
-
-    pygame.display.flip()
-    for event in pygame.event.get():
-        if event.type == pygame.QUIT:
-            pygame.quit()
-            raise SystemExit
