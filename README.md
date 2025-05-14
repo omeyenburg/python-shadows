@@ -1,10 +1,9 @@
 # python-shadows
-
 Real time 2d shadow casting in Python using `pygame` and `numpy`.
 
 <p float="left">
-  <img src="https://raw.githubusercontent.com/omeyenburg/python-shadows/main/assets/preview0.png" width="300" />
-  <img src="https://raw.githubusercontent.com/omeyenburg/python-shadows/main/assets/preview1.png" width="300" />
+  <img src="https://github.com/omeyenburg/python-shadows/blob/main/assets/preview0.png" width="300" />
+  <img src="https://github.com/omeyenburg/python-shadows/blob/main/assets/preview1.png" width="300" />
 </p>
 
 ## Requirements
